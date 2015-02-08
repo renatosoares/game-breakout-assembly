@@ -1,7 +1,8 @@
-#Um clone do jogo Breakout feito com Assembly MIPS. :goberserk:
+#Um clone do jogo Breakout desenvolvido com Assembly MIPS. :goberserk:
 
-Foi desenvolvido como um trabalho prático para uma tarefa final da disciplina
-Arquiterura de Computadores. Durante nosso curso estudamos a arquitetura MIPS.
+Trabalho prático para uma tarefa final da disciplina
+Arquiterura de Computadores. Durante nosso curso 
+estudamos a arquitetura MIPS.
 
 #Sobre o jogo :video_game:
 

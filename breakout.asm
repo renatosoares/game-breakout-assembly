@@ -39,6 +39,13 @@ qtdElemMatriz:		.word	8192	# quantidade de elementos da matriz
 
 vermelho:		.word	0x00C54849
 laranja:		.word 	0x00C66C3A
+amareloqueimado:	.word	0x00B47A30
+amarelo:		.word	0x00A2A22A #!!! PAREI AQUI: falta adicionar o resto das cores e consertar o loop para mudar de cor
+
+# 00B47A30 amarelo queimado
+# 00A2A22A amarelo
+# 0048A048 verde
+# 004248C8 azul
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # _____  ____  _    _____
@@ -68,23 +75,39 @@ addi	$s3, $at, 0x1808
 lw	$t0, 0($s3)	# carregue a quantidade de elementos da matriz
 # carregue cor vermelha
 lui 	$at, 0x1001
-addi 	$t1, $at, 0x180C
-lw	$t1, 0($s3)
+addi 	$s4, $at, 0x180C
+lw	$t1, 0($s4)
+
+lw 	$t2, 0($s1) 	# carrega a quantidade de linhas
+
+addi 	$t9, $zero, 2
+addi	$t8, $zero, 6
 
 #loop que insere valores na memória -------------------------------------
 	loopAdd:
 			#adiciona cor ao pixel
-		
-
-		sw	$t1, 0($s0)#!!!!!!!! o problema esta aqui, gravando valores errados na memoria
+		sw	$t1, 0($s0)
 		addi	$s0, $s0, 4
 
-		addi	$s3, $s3, -1
-		bgtz	$s3, loopAdd	# Se maior que zero vá para repetição
+		addi	$t2, $t2, -1
+		bgtz	$t2, loopAdd	# Se maior que zero vá para repetição
+		
+		#queima a segunda linha
+		addi	$t9, $t9, -1
+		lw 	$t2, 0($s1) 	# carrega a quantidade de linhas
+		bgtz	$t9, loopAdd
+		#queima as cores
+		addi	$t8, $t8, -1
+		lw	$t1, 4($s4)
+		lw 	$t2, 0($s1)
+		bgtz	$t8, loopAdd
+		
 
 ###################================================================================
 
-
+fim:
+	addi	$v0, $zero, 10
+	syscall
 ####base preenche duas linhas############################################
 #li $t0, 256		# tamanho de duas linhas
 #la $t1, 0x00C54849	# Cor primeira cor vermelho

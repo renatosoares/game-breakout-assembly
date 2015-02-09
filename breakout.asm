@@ -37,10 +37,13 @@ qtdColunas:		.word	128	# constante de coluna
 qtdLinhas:		.word 	64	# constante de linhas
 qtdElemMatriz:		.word	8192	# quantidade de elementos da matriz
 
+#----- Armazenando cores
 vermelho:		.word	0x00C54849
 laranja:		.word 	0x00C66C3A
 amareloqueimado:	.word	0x00B47A30
-amarelo:		.word	0x00A2A22A #!!! PAREI AQUI: falta adicionar o resto das cores e consertar o loop para mudar de cor
+amarelo:		.word	0x00A2A22A 
+verde:			.word	0x0048A048
+azul:			.word	0x004248C8
 
 # 00B47A30 amarelo queimado
 # 00A2A22A amarelo
@@ -98,8 +101,11 @@ addi	$t8, $zero, 6
 		bgtz	$t9, loopAdd
 		#queima as cores
 		addi	$t8, $t8, -1
-		lw	$t1, 4($s4)
-		lw 	$t2, 0($s1)
+		addi	$t9, $t9, 2
+		lw 	$t2, 0($s1)	
+		addi 	$s4, $s4, 4
+		lw	$t1, 0($s4)
+		
 		bgtz	$t8, loopAdd
 		
 
@@ -108,21 +114,7 @@ addi	$t8, $zero, 6
 fim:
 	addi	$v0, $zero, 10
 	syscall
-####base preenche duas linhas############################################
-#li $t0, 256		# tamanho de duas linhas
-#la $t1, 0x00C54849	# Cor primeira cor vermelho
-#li $t2, 0x10010000 	# Endereço da tela (pixel 0,0)
 
-# salvar no registrador $s0 em diante valores fixos
-
-#addi 	$t0, $t0, -1	# Sempre é o valor da linha -1
-
-#loop:
-#	sw $t1, ($t2)
-#	addi $t2, $t2, 4
-#	sw $t1, ($t2)
-#	addi $t0, $t0, -1
-#	bgtz $t0, loop
 ####base preenche duas linhas############################################	
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 	

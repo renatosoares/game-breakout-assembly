@@ -125,39 +125,54 @@ addi	$t8, $zero, 1	# segura o loop para verificar tecla
 lui	$at, 0x1001
 add	$s0, $zero, $at
 
+addi	$s0, $s0, 32000		#! PAREI AQUI
 
 # carregue cor amarela
 lui 	$at, 0x1001
 addi 	$s4, $at, 0x180C
-addi 	$s4, $s4, 8
+addi 	$s4, $s4, 16
 lw	$t1, 0($s4)
 
 
 
+	# endereço que informa quando foi digitado
+	lui 	$at, 0xFFFF
+	addi	$s6, $at, 0x0
+	
+	# endereço de armazenamento do caractere
+	lui 	$at, 0xFFFF
+	addi 	$s5, $at, 0x0004
 #### Loop que verifica teclado ##########################################	
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-	loopVerifica:
-		lui 	$at, 0xFFFF
-		addi 	$s5, $at, 0x0004
+	verificaSeDigitou:
+		lw	$t6, 0($s6)
+		beq	$t6, 1, moveBarra
+		j	verificaSeDigitou
+	
+
+	moveBarra:
 		lw	$t7, 0($s5)
 		
+		# condicionais para verificar tecla digitada
 		beq	$t7, 106, deslocaEsquerda
 		beq	$t7, 108, deslocaDireita
 		beq	$t7, 101, fim
+		
 		j	continue
 		deslocaEsquerda:
 						#adiciona cor ao pixel
-			sw	$t1, 0($s0)		#!!!!!!!! BUG
+			sw	$t1, 0($s0)		
 			addi	$s0, $s0, -4			 
 		deslocaDireita:
 			sw	$t1, 0($s0)
 			addi	$s0, $s0, 4
-			
+ 			
 		 
 		continue:
 		sw	$zero, 0($s5)
-		add	$t7, $zero, $zero
-		bgtz	$t8, loopVerifica
+		#add	$t7, $zero, $zero
+		#bgtz	$t8, loopVerifica
+		j	verificaSeDigitou
 
 
 #### Finaliza ###########################################################	

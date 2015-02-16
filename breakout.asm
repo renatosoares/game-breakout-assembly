@@ -59,7 +59,7 @@ azul:			.word	0x004248C8
 .text
 main:
 
-# carrega o endereço do inicio do array
+# carrega o endereço do inicio da matriz da tela
 lui	$at, 0x1001
 add	$s0, $zero, $at
 
@@ -83,8 +83,12 @@ lw	$t1, 0($s4)
 
 lw 	$t2, 0($s1) 	# carrega a quantidade de linhas
 
-addi 	$t9, $zero, 2
-addi	$t8, $zero, 6
+# valores a ser decrementados no loop
+addi 	$t9, $zero, 2	# a cada duas linha uma cor
+addi	$t8, $zero, 6	# serão queimadas 6 cores
+
+######## preenche duas linhas############################################	
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 #loop que insere valores na memória -------------------------------------
 	loopAdd:
@@ -110,11 +114,58 @@ addi	$t8, $zero, 6
 		
 
 ###################================================================================
+# zera registradores
+add 	$t7, $zero, $zero
+add 	$t8, $zero, $zero
+add 	$t9, $zero, $zero
+
+addi	$t8, $zero, 1	# segura o loop para verificar tecla
+
+# carrega o endereço do inicio da matriz da tela
+lui	$at, 0x1001
+add	$s0, $zero, $at
+
+
+# carregue cor amarela
+lui 	$at, 0x1001
+addi 	$s4, $at, 0x180C
+addi 	$s4, $s4, 8
+lw	$t1, 0($s4)
+
+
+
+#### Loop que verifica teclado ##########################################	
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+	loopVerifica:
+		lui 	$at, 0xFFFF
+		addi 	$s5, $at, 0x0004
+		lw	$t7, 0($s5)
+		
+		beq	$t7, 106, deslocaEsquerda
+		beq	$t7, 108, deslocaDireita
+		beq	$t7, 101, fim
+		j	continue
+		deslocaEsquerda:
+						#adiciona cor ao pixel
+			sw	$t1, 0($s0)		#!!!!!!!! BUG
+			addi	$s0, $s0, -4			 
+		deslocaDireita:
+			sw	$t1, 0($s0)
+			addi	$s0, $s0, 4
+			
+		 
+		continue:
+		sw	$zero, 0($s5)
+		add	$t7, $zero, $zero
+		bgtz	$t8, loopVerifica
+
+
+#### Finaliza ###########################################################	
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 fim:
 	addi	$v0, $zero, 10
 	syscall
 
-####base preenche duas linhas############################################	
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
 	

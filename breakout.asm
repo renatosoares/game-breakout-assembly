@@ -125,15 +125,15 @@ addi	$t8, $zero, 1	# segura o loop para verificar tecla
 lui	$at, 0x1001
 add	$s0, $zero, $at
 
-addi	$s0, $s0, 32000		#! PAREI AQUI
+addi	$s0, $s0, 32000		# move o pixel para dar inicio na penutina linha da tela e quase no meio	
 
 # carregue cor amarela
-lui 	$at, 0x1001
-addi 	$s4, $at, 0x180C
-addi 	$s4, $s4, 16
-lw	$t1, 0($s4)
+lui 	$at, 0x1001		
+addi 	$s4, $at, 0x180C	# endereço que armazena o valor da cor vermelha
+addi 	$s4, $s4, 16		# movendo o valor do enderço para printar a cor verde
+lw	$t1, 0($s4)		# carrega a cor no registrador
 
-
+add	$t4, $zero, $zero	# registrador para apagar rastro do pixel (manter o fundo) 
 
 	# endereço que informa quando foi digitado
 	lui 	$at, 0xFFFF
@@ -151,7 +151,7 @@ lw	$t1, 0($s4)
 	
 
 	moveBarra:
-		lw	$t7, 0($s5)
+		lw	$t7, 0($s5)	# carrega valor da tecla digitada
 		
 		# condicionais para verificar tecla digitada
 		beq	$t7, 106, deslocaEsquerda
@@ -160,18 +160,20 @@ lw	$t1, 0($s4)
 		
 		j	continue
 		deslocaEsquerda:
-						#adiciona cor ao pixel
-			sw	$t1, 0($s0)		
-			addi	$s0, $s0, -4			 
+			sw	$t4, 0($s0)
+
+ 			addi	$s0, $s0, -8
+ 			sw	$t1, 0($s0)		 
 		deslocaDireita:
-			sw	$t1, 0($s0)
-			addi	$s0, $s0, 4
- 			
+			sw	$t4, 0($s0)
+
+ 			addi	$s0, $s0, 4
+ 			sw	$t1, 0($s0)
+			
 		 
 		continue:
 		sw	$zero, 0($s5)
-		#add	$t7, $zero, $zero
-		#bgtz	$t8, loopVerifica
+
 		j	verificaSeDigitou
 
 

@@ -160,17 +160,25 @@ add	$t4, $zero, $zero	# registrador para apagar rastro do pixel (manter o fundo)
 		
 		j	continue
 		deslocaEsquerda:
-			sw	$t4, 0($s0)
+			sw	$t4, 8($s0)
+			
 
- 			addi	$s0, $s0, -8
- 			sw	$t1, 0($s0)		 
+ 			addi	$s0, $s0, -4
+ 			
+ 			sw	$t1, 0($s0)
+ 			sw	$t1, 4($s0)		# ! PAREI AQUI!
+ 			sw	$t1, 8($s0)
+		j	continue
+
 		deslocaDireita:
 			sw	$t4, 0($s0)
-
+			
  			addi	$s0, $s0, 4
  			sw	$t1, 0($s0)
+ 			sw	$t1, 4($s0)
+ 			sw	$t1, 8($s0)
+ 		
 			
-		 
 		continue:
 		sw	$zero, 0($s5)
 

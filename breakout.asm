@@ -112,14 +112,17 @@ addi	$t8, $zero, 6	# serão queimadas 6 cores
 		
 		bgtz	$t8, loopAdd
 		
+		
 
 ###################================================================================
 # zera registradores
+add	$t5, $zero, $zero
 add 	$t7, $zero, $zero
 add 	$t8, $zero, $zero
 add 	$t9, $zero, $zero
 
-addi	$t8, $zero, 1	# segura o loop para verificar tecla
+
+#addi	$t8, $zero, 1	# segura o loop para verificar tecla
 
 # carrega o endereço do inicio da matriz da tela
 lui	$at, 0x1001
@@ -143,12 +146,25 @@ add	$t4, $zero, $zero	# registrador para apagar rastro do pixel (manter o fundo)
 	lui 	$at, 0xFFFF
 	addi 	$s5, $at, 0x0004
 #### Loop que verifica teclado ##########################################	
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+
+#---------------------------------------------------------------------------------------
+#######################	Loop do jogo ################################
+#---------------------------------------------------------------------------------------
 	verificaSeDigitou:
+#--------------------------- Movimento da bolinha -----------------------------------------
+
+		
+		
+#--------------------------- FIM Movimento da bolinha --------------------------------------
 		lw	$t6, 0($s6)
 		beq	$t6, 1, moveBarra
+
 		j	verificaSeDigitou
-	
+#---------------------------------------------------------------------------------------
+####################### FIM	Loop do jogo #######################
+#---------------------------------------------------------------------------------------	
 
 	moveBarra:
 		lw	$t7, 0($s5)	# carrega valor da tecla digitada
@@ -159,30 +175,68 @@ add	$t4, $zero, $zero	# registrador para apagar rastro do pixel (manter o fundo)
 		beq	$t7, 101, fim
 		
 		j	continue
+		
+#------------------------bloco para deslocar para esquerda-----------------------------------
 		deslocaEsquerda:
-			sw	$t4, 8($s0)
+			bgtz	$t8, ajustaRegistradorE		# verifica se ultimo movimento foi para direita
 			
+			j	continueDeslocaE
+			
+			ajustaRegistradorE:
+				addi 	$s0, $s0, -76
+				add	$t8, $zero, $zero		
 
- 			addi	$s0, $s0, -4
- 			
- 			sw	$t1, 0($s0)
- 			sw	$t1, 4($s0)		# ! PAREI AQUI!
- 			sw	$t1, 8($s0)
-		j	continue
-
+			continueDeslocaE:
+			sw	$t4, 76($s0)
+			addi	$s0, $s0, 76
+			addi	$t3, $zero, 1			# registro de orientação do ultimo movimento
+			
+ 			desenhoBarraE:
+ 				beq 	$t5, 20, continue	# controle de quantos pixels foi desenhado
+ 				
+ 				addi	$s0, $s0, -4
+ 				sw	$t1, 0($s0)
+ 				 				
+ 				addi	$t5, $t5, 1	
+ 					
+ 				j desenhoBarraE
+#------------------------------------------------------------------------------------
+  
+#------------------------bloco para deslocar para direita-----------------------------------
 		deslocaDireita:
-			sw	$t4, 0($s0)
+			bgtz	$t3, ajustaRegistradorD		# verifica se ultimo movimento foi para esquerda
 			
- 			addi	$s0, $s0, 4
- 			sw	$t1, 0($s0)
- 			sw	$t1, 4($s0)
- 			sw	$t1, 8($s0)
- 		
+			j	continueDeslocaD
+			
+			ajustaRegistradorD:
+				addi 	$s0, $s0, 76
+				add	$t3, $zero, $zero		
+
+			
+			continueDeslocaD:
+				sw	$t4, -76($s0)
+				addi	$s0, $s0, -76
+				addi	$t8, $zero, 1		# registro de orientação do ultimo movimento
+			
+ 				desenhoBarraD:
+ 					beq 	$t5, 20, continue	# controle de quantos pixels foi desenhado
+ 				
+ 					addi	$s0, $s0, 4
+ 					sw	$t1, 0($s0)
+ 				 				
+ 					addi	$t5, $t5, 1	
+ 					
+ 				
+ 					j desenhoBarraD
+#------------------------------------------------------------------------------------ 		
 			
 		continue:
 		sw	$zero, 0($s5)
-
+		add	$t5, $zero, $zero 
+		
 		j	verificaSeDigitou
+		
+
 
 
 #### Finaliza ###########################################################	

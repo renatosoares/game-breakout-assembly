@@ -136,7 +136,7 @@ addi 	$s4, $at, 0x180C	# endereço que armazena o valor da cor vermelha
 addi 	$s4, $s4, 16		# movendo o valor do enderço para printar a cor verde
 lw	$t1, 0($s4)		# carrega a cor no registrador
 
-add	$t4, $zero, $zero	# registrador para apagar rastro do pixel (manter o fundo) 
+#$zero	# registrador para apagar rastro do pixel (manter o fundo) 
 
 	# endereço que informa quando foi digitado
 	lui 	$at, 0xFFFF
@@ -157,6 +157,8 @@ addi	$s4, $s4, -16
 lw	$t9, 0($s4)
 
 addi	$t5, $t5, 1000
+#------------------------------------------------------------------
+
 #### Loop que verifica teclado ##########################################	
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -169,33 +171,41 @@ addi	$t5, $t5, 1000
 		
 			bgtz	$t5, naoDesenhaBolinha
 			
-			# conparação de $t3 < 60
-				#addi 	$t0, $zero, 60
-				#slt	$t0, $t3, $t0
-				slti	$t7, $s7, 10000
-				beq	$zero, $t7, bolinhaDescendo
-				bne	$zero, $t7, bolinhaSubindo
+				# conparação de ? < ?
+				#slt	$t7, $s7, $s0
+				
+				#beq	$zero, $t7, bolinhaSubindo
+				#bne	$zero, $t7, bolinhaDescendo
+				
+				slt	$t4, $s0, $s7
+					
+					beq 	$zero, $t4, bolinhaDescendo
+					
+						add	$t7, $zero, $s0				#!!!! PAREI AQUI !!!
+						lw	$t4, 0($t7)
+						beq	$zero, $t4, bolinhaDescendo
+						bne	$zero, $t4, bolinhaSubindo 
+				
 				
 			bolinhaSubindo:
  				# pinta pixel com fundo
- 				sw	$t4, -4($s7)
+ 				sw	$zero, 0($s7)
  				addi	$s7, $s7, -512
  				# coloca cor no pixel
  				sw	$t9, 0($s7)
  				addi	$t5, $t5, 25000
+ 				
+ 				
  				j naoDesenhaBolinha
 			
 			bolinhaDescendo:
  				# pinta pixel com fundo
- 				sw	$t4, 0($s7)
+ 				sw	$zero, 0($s7)
  				addi	$s7, $s7, 512
  				# coloca cor no pixel
  				sw	$t9, 0($s7)
  				addi	$t5, $t5, 25000
- 				
- 			
- 			
- 			
+ 	
  			naoDesenhaBolinha: 				
  			addi	$t5, $t5, -1	
  					
@@ -236,7 +246,7 @@ addi	$t5, $t5, 1000
 				add	$t8, $zero, $zero		
 
 			continueDeslocaE:
-			sw	$t4, 76($s0)
+			sw	$zero, 76($s0)
 			addi	$s0, $s0, 76
 			addi	$t3, $zero, 1			# registro de orientação do ultimo movimento
 			
@@ -263,7 +273,7 @@ addi	$t5, $t5, 1000
 
 			
 			continueDeslocaD:
-				sw	$t4, -76($s0)
+				sw	$zero, -76($s0)
 				addi	$s0, $s0, -76
 				addi	$t8, $zero, 1		# registro de orientação do ultimo movimento
 			

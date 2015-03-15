@@ -145,6 +145,18 @@ add	$t4, $zero, $zero	# registrador para apagar rastro do pixel (manter o fundo)
 	# endereço de armazenamento do caractere
 	lui 	$at, 0xFFFF
 	addi 	$s5, $at, 0x0004
+
+#carrega o endereço inicial da bola
+lui 	$at, 0x1001
+add	$s7, $zero, $at
+
+addi	$s7, $s7, 7000
+#------------------------------------------------------------------
+# carrega cor
+addi	$s4, $s4, -16
+lw	$t9, 0($s4)
+
+addi	$t5, $t5, 1000
 #### Loop que verifica teclado ##########################################	
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -154,12 +166,47 @@ add	$t4, $zero, $zero	# registrador para apagar rastro do pixel (manter o fundo)
 #---------------------------------------------------------------------------------------
 	verificaSeDigitou:
 #--------------------------- Movimento da bolinha -----------------------------------------
-
+		
+			bgtz	$t5, naoDesenhaBolinha
+			
+			# conparação de $t3 < 60
+				#addi 	$t0, $zero, 60
+				#slt	$t0, $t3, $t0
+				slti	$t7, $s7, 10000
+				beq	$zero, $t7, bolinhaDescendo
+				bne	$zero, $t7, bolinhaSubindo
+				
+			bolinhaSubindo:
+ 				# pinta pixel com fundo
+ 				sw	$t4, -4($s7)
+ 				addi	$s7, $s7, -512
+ 				# coloca cor no pixel
+ 				sw	$t9, 0($s7)
+ 				addi	$t5, $t5, 25000
+ 				j naoDesenhaBolinha
+			
+			bolinhaDescendo:
+ 				# pinta pixel com fundo
+ 				sw	$t4, 0($s7)
+ 				addi	$s7, $s7, 512
+ 				# coloca cor no pixel
+ 				sw	$t9, 0($s7)
+ 				addi	$t5, $t5, 25000
+ 				
+ 			
+ 			
+ 			
+ 			naoDesenhaBolinha: 				
+ 			addi	$t5, $t5, -1	
+ 					
+ 						
 		
 		
 #--------------------------- FIM Movimento da bolinha --------------------------------------
+#--------------------------- Verifica se digitou --------------------------------------------
 		lw	$t6, 0($s6)
 		beq	$t6, 1, moveBarra
+#------------------------FIM Verifica se digitou --------------------------------------------
 
 		j	verificaSeDigitou
 #---------------------------------------------------------------------------------------
@@ -167,7 +214,9 @@ add	$t4, $zero, $zero	# registrador para apagar rastro do pixel (manter o fundo)
 #---------------------------------------------------------------------------------------	
 
 	moveBarra:
-		lw	$t7, 0($s5)	# carrega valor da tecla digitada
+		
+		add	$t5, $zero,$zero	# registrador agora será usado para quantidade de pixel na barra
+		lw	$t7, 0($s5)		# carrega valor da tecla digitada
 		
 		# condicionais para verificar tecla digitada
 		beq	$t7, 106, deslocaEsquerda
@@ -232,7 +281,7 @@ add	$t4, $zero, $zero	# registrador para apagar rastro do pixel (manter o fundo)
 			
 		continue:
 		sw	$zero, 0($s5)
-		add	$t5, $zero, $zero 
+		addi	$t5, $t5, 5000
 		
 		j	verificaSeDigitou
 		

@@ -178,9 +178,10 @@ addi	$t5, $t5, 1000
 				#bne	$zero, $t7, bolinhaDescendo
 				
 				slt	$t4, $s0, $s7
-					
-					beq 	$zero, $t4, bolinhaDescendo
-					
+				
+				bne 	$zero, $t4, colisaoComBarra
+				
+						colisaoComBarra:
 						add	$t7, $zero, $s0				#!!!! PAREI AQUI !!!
 						lw	$t4, 0($t7)
 						beq	$zero, $t4, bolinhaDescendo
